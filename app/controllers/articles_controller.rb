@@ -1,12 +1,11 @@
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy]
+  before_action :set_categories, only: [:show, :edit, :update, :destroy]
 
   # GET /articles
   # GET /articles.json
   def index
-    Article.sort_by_created_at
-    page = params[:page] || 1
-    @articles = Article.search('*', load: false, page: page, per_page: 25)
+    @articles = Article.all
   end
 
   # GET /articles/1
@@ -57,8 +56,6 @@ class ArticlesController < ApplicationController
   # DELETE /articles/1.json
   def destroy
     @article.destroy
-    Article.search_index.refresh
-
     respond_to do |format|
       format.html { redirect_to articles_url, notice: 'Article was successfully destroyed.' }
       format.json { head :no_content }
@@ -71,8 +68,12 @@ class ArticlesController < ApplicationController
       @article = Article.find(params[:id])
     end
 
+    def set_categories
+      @categories = $redis_cache.hgetall('categories').map{|x| JSON(x[1])}.map{|x| [x["name"], x["id"]]}
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def article_params
-      params.require(:article).permit(:title, :description)
+      params.require(:article).permit(:title, :description, :category_id)
     end
 end

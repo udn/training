@@ -1,0 +1,1 @@
+$redis_cache = Redis.new
