@@ -1,6 +1,6 @@
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy]
-  before_action :set_categories, only: [:show, :edit, :update, :destroy]
+  before_action :set_categories, only: [:new, :show, :edit, :update, :destroy]
 
   # GET /articles
   # GET /articles.json
@@ -29,6 +29,13 @@ class ArticlesController < ApplicationController
 
     respond_to do |format|
       if @article.save
+
+        # ArticleMailer.new_article(@article.id).deliver_now
+        # Completed 302 Found in 9709ms (Searchkick: 1247.3ms | ActiveRecord: 69.5ms)
+
+
+        NewArticleEmailNotificationWorker.perform_async(@article.id)
+
         format.html { redirect_to @article, notice: 'Article was successfully created.' }
         format.json { render :show, status: :created, location: @article }
       else

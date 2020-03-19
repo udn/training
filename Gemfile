@@ -21,3 +21,4 @@ end
 
 gem 'searchkick'
 gem 'redis'
+gem 'sidekiq'

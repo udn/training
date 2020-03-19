@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :articles
   root 'articles#index'
   resources :articles
+
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
 end
