@@ -35,6 +35,7 @@ class ArticlesController < ApplicationController
 
 
         NewArticleEmailNotificationWorker.perform_async(@article.id)
+        # Completed 302 Found in 401ms (Searchkick: 319.2ms | ActiveRecord: 16.7ms)
 
         format.html { redirect_to @article, notice: 'Article was successfully created.' }
         format.json { render :show, status: :created, location: @article }
